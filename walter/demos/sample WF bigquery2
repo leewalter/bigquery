@@ -1,0 +1,60 @@
+CREATE TEMPORARY FUNCTION
+  dateSTRING(label STRING)
+  RETURNS STRING
+  LANGUAGE js AS """
+  try {
+    var parts = label.split(' ');    
+    var months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+    var monthNum = months.indexOf(parts[0])+1;
+    if (monthNum<10) { monthNum = "0" + monthNum;}
+    var dayNum = parts[1];
+    if (dayNum<10) { dayNum = "0" + dayNum;}
+    
+    date_string =  parts[2]  + '/' + monthNum + '/' + dayNum ;   //  yyyy/mm/dd
+    //date_string =  monthNum + '/' + dayNum + '/' + parts[2];   //  mm/dd/yyyy
+    
+    return date_string;
+  } catch (e) {
+    return '';
+  }
+""";
+SELECT
+  label,
+  dateSTRING(label) date,
+  url,
+  pageid,
+  TTFB,
+  renderStart,
+  onContentLoaded,
+  onLoad,
+  fullyLoaded,
+  visualComplete,
+  PageSpeed,
+  SpeedIndex,
+  rank,
+  reqTotal,
+  reqHtml,
+  reqJS,
+  reqCSS,
+  reqImg,
+  reqFont,
+  reqFlash,
+  reqJson,
+  reqOther,
+  bytesTotal,
+  bytesHtml,
+  bytesJS,
+  bytesCSS,
+  bytesImg,
+  bytesFont,
+  bytesFlash,
+  bytesJson,
+  bytesOther
+FROM
+  `httparchive.summary_pages.202*`
+WHERE
+  _TABLE_SUFFIX LIKE "%mobile%"
+  AND url LIKE "%://www.wellsfargo.com/"
+
+ORDER BY
+  date ASC
